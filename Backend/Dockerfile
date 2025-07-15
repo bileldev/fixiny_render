@@ -25,4 +25,4 @@ RUN chmod +x entrypoint.sh
 EXPOSE 3001
 
 # Run the entrypoint (which seeds once then starts)
-CMD ["./entrypoint.sh"]
+CMD ["./app/entrypoint.sh"]
