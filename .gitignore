@@ -1,0 +1,13 @@
+# Frontend (Vite/React)
+frontend/node_modules
+frontend/dist
+frontend/.env
+
+# Backend (Node.js)
+backend/node_modules
+backend/.env
+
+# System files
+.DS_Store
+.idea
+.vscode

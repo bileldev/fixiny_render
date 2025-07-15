@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // .env file
+}
+
+enum UserRole {
+  ADMIN
+  CHEF_PARK
+  PARTICULIER
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum MaintenanceType {
+  PREVENTIVE_MAINTENANCE
+  CORRECTIVE_MAINTENANCE
+}
+
+enum MaintenanceStatus {
+  DONE
+  OVERDUE
+  UPCOMING
+}
+
+
+enum NotificationType {
+  MAINTENANCE_UPCOMING         // For chef_park
+  MAINTENANCE_OVERDUE          // For chef_park
+  MAINTENANCE_COMPLETED        // For chef_park
+  MAINTENANCE_UPCOMING_ADMIN   // For platform admin
+  MAINTENANCE_OVERDUE_ADMIN    // For platform admin
+  MAINTENANCE_COMPLETED_ADMIN  // For platform admin
+}
+
+model User {
+  id       String   @id @default(uuid())
+  first_name     String
+  last_name     String 
+  email    String   @unique
+  phone_number  String
+  password     String
+  photo        String?
+  role         UserRole
+  status       UserStatus   @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  
+  // Relationships
+  enterprise   Enterprise?  @relation(fields: [enterprise_id], references: [id])
+  enterprise_id String?
+  zones        Zone[]
+  notifications Notification[]
+  cars          Car[]
+}
+
+model Enterprise {
+  id          String      @id @default(uuid())
+  enterprise_name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  users      User[]
+  zones      Zone[]
+}
+
+model Zone {
+  id          String      @id @default(uuid())
+  zone_name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Zone names must be unique per enterprise
+  @@unique([enterprise_id, zone_name])
+  
+  // A zone can only have one chef_park
+  @@unique([id, chef_park_id])
+
+  // Relationships
+  enterprise   Enterprise @relation(fields: [enterprise_id], references: [id])
+  enterprise_id String
+  chef_park     User?      @relation(fields: [chef_park_id], references: [id])
+  chef_park_id   String?
+  cars        Car[]
+  budget       Budget?
+}
+
+
+model Car {
+  id          String      @id @default(uuid())
+  make        String
+  model       String
+  year       Int 
+  licensePlate String     @unique
+  vin_number   String     @unique
+  initial_mileage     Float  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+    // Relationships
+  user        User?        @relation(fields: [user_id], references: [id])
+  user_id      String?  
+  zone          Zone?        @relation(fields: [zone_id], references: [id])
+  zone_id        String?
+  mileages      Mileage[]
+  maintenances  Maintenance[]
+}
+
+model Mileage {
+  id          String       @id @default(uuid())
+  value       Float
+  recordedAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+
+  // Relationships
+  car         Car       @relation(fields: [car_id], references: [id])
+  car_id       String
+}
+
+model Maintenance {
+  id          String      @id @default(uuid())
+  car         Car         @relation(fields: [car_id], references: [id])
+  car_id       String
+  type        MaintenanceType
+  date        DateTime
+  recordedMileage     Int
+  cost        Float
+  description String?
+  status MaintenanceStatus
+  factureUrl       String?           @db.VarChar(255)
+  createdAt   DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Budget {
+  id          String      @id @default(uuid())
+  amount      Float
+  description String?
+  fiscalYear  Int
+  isAdmin     Boolean     @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  zone        Zone?     @relation(fields: [zone_id], references: [id])
+  zone_id      String?  @unique
+}
+
+model MaintenanceRule {
+  id          String      @id @default(uuid())
+  name        String      @unique
+  description String?
+  mileageInterval Float  // e.g., 10000 for oil change every 10,000 km
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Notification {
+  id          String      @id @default(uuid())
+  title       String
+  message     String
+  isRead      Boolean   @default(false)
+  type        NotificationType    // e.g., "APPROVAL", "MAINTENANCE_REMINDER", "OVERDUE_MAINTENANCE"
+  createdAt   DateTime  @default(now())
+  readAt      DateTime?
+
+  // Relationships
+  user        User      @relation(fields: [user_id], references: [id])
+  user_id      String
+}
