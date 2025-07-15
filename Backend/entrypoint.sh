@@ -5,9 +5,12 @@ set -e
 
 FLAG_FILE="/app/.db_seeded"
 
-DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*//.*:.*@(.*):.*\/.*|\1|')
-DB_PORT=5432
-
+DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*@([^:/]+):.*|\1|')
+#DB_PORT=5432
+if [ -z "$DATABASE_URL" ]; then
+  echo "[error] DATABASE_URL is not set!"
+  exit 1
+fi
 echo "[init] Waiting for the database to be ready at $DB_HOST:$DB_PORT..."
 until nc -z "$DB_HOST" "$DB_PORT"; do
   echo "⏳ Waiting for $DB_HOST:$DB_PORT..."
