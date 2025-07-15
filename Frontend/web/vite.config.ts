@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3001', // Your backend URL
+        target: process.env.VITE_API_BASE_URL
       },
     },
   },
