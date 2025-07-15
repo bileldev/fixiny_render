@@ -15,12 +15,12 @@ if [ -z "$DATABASE_URL" ]; then
   echo "[error] DATABASE_URL is not set!"
   exit 1
 fi
-echo "[init] Waiting for the database to be ready at $DB_HOST:$DB_PORT..."
-until nc -z "$DB_HOST" "$DB_PORT"; do
-  echo "⏳ Waiting for $DB_HOST:$DB_PORT..."
-  sleep 1
-done
-
+### echo "[init] Waiting for the database to be ready at $DB_HOST:$DB_PORT..."
+#until nc -z "$DB_HOST" "$DB_PORT"; do
+#  echo "⏳ Waiting for $DB_HOST:$DB_PORT..."
+#  sleep 1
+#done
+###
 echo "[init] Database is ready."
 
 # Run migrations every time the container starts
