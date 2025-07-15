@@ -6,10 +6,11 @@ set -e
 FLAG_FILE="/app/.db_seeded"
 
 DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*//.*:.*@(.*):.*\/.*|\1|')
+DB_PORT=5432
 
-echo "[init] Waiting for the database to be ready at $DB_HOST..."
-until nc -z "$DB_HOST"; do
-  echo "⏳ Waiting for $DB_HOST..."
+echo "[init] Waiting for the database to be ready at $DB_HOST:$DB_PORT..."
+until nc -z "$DB_HOST" "$DB_PORT"; do
+  echo "⏳ Waiting for $DB_HOST:$DB_PORT..."
   sleep 1
 done
 
