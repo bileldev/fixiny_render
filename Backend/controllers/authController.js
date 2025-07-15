@@ -281,32 +281,105 @@ async function handleNewEnterprise(res, userData, enterpriseData, zones) {
 }
 
 // Login user
+// exports.login = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+    
+//     const user = await prisma.user.findUnique({ 
+//       where: { email: email.toLowerCase().trim() } 
+//     });
+
+//     if (!user) {
+//       return res.status(401).json({ error: "Invalid credentials" });
+//     }
+
+//     const validPassword = await bcrypt.compare(password, user.password);
+//     if (!validPassword) {
+//       return res.status(401).json({ error: "Invalid credentials" });
+//     }
+
+//     // Block unapproved users (except admins who auto-approve)
+//     if ((user.status == 'REJECTED' || user.status == 'PENDING') && user.role !== 'ADMIN') {
+//       return res.status(403).json({ 
+//         error: "Account pending approval",
+//         details: "An admin must approve your account before login"
+//       });
+
+//     }    
+
+//     const token = jwt.sign(
+//       { 
+//         id: user.id, 
+//         role: user.role,
+//         status: user.status,
+//         enterprise_id: user?.enterprise_id 
+//       },
+//       process.env.JWT_SECRET, // Make sure this matches your .env
+//       { expiresIn: '3h' }
+//     );
+
+//     const isMobileClient = req.headers['x-client-type'] === 'mobile';
+//     if (isMobileClient) {
+//       return res.json({
+//         token, // Only for mobile clients
+//         user: {
+//           id: user.id,
+//           email: user.email,
+//           first_name: user.first_name,
+//           last_name: user.last_name,
+//           phone_number: user.phone_number,
+//           role: user.role,
+//           status: user.status,
+//           enterprise_id: user?.enterprise_id
+//         }
+//       });
+
+//     } else {
+//       // 4. Set cookie and respond
+//       res.cookie('token', token, { 
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === 'production',
+//         sameSite: 'strict',
+//         maxAge: 10800000
+//       });
+
+//       res.json({ 
+//         id: user.id,
+//         email: user.email,
+//         first_name: user.first_name,
+//         last_name: user.last_name,
+//         phone_number: user.phone_number,
+//         role: user.role,
+//         status: user.status,
+//         enterprise_id: user?.enterprise_id      
+//       });
+//     }    
+
+//   } catch (err) {
+//     console.error("Login error:", err);
+//     res.status(500).json({ error: "Login failed" });
+//   }
+// };
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    
     const user = await prisma.user.findUnique({ 
       where: { email: email.toLowerCase().trim() } 
     });
 
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
+    if (!validPassword) return res.status(401).json({ error: "Invalid credentials" });
 
-    // Block unapproved users (except admins who auto-approve)
     if ((user.status == 'REJECTED' || user.status == 'PENDING') && user.role !== 'ADMIN') {
       return res.status(403).json({ 
         error: "Account pending approval",
         details: "An admin must approve your account before login"
       });
-
-    }    
+    }
 
     const token = jwt.sign(
       { 
@@ -315,50 +388,37 @@ exports.login = async (req, res) => {
         status: user.status,
         enterprise_id: user?.enterprise_id 
       },
-      process.env.JWT_SECRET, // Make sure this matches your .env
+      process.env.JWT_SECRET,
       { expiresIn: '3h' }
     );
 
-    const isMobileClient = req.headers['x-client-type'] === 'mobile';
-    if (isMobileClient) {
-      return res.json({
-        token, // Only for mobile clients
-        user: {
-          id: user.id,
-          email: user.email,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          phone_number: user.phone_number,
-          role: user.role,
-          status: user.status,
-          enterprise_id: user?.enterprise_id
-        }
-      });
+    // Always return JSON (even for web)
+    const userData = {
+      id: user.id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone_number: user.phone_number,
+      role: user.role,
+      status: user.status,
+      enterprise_id: user?.enterprise_id      
+    };
 
+    if (req.headers['x-client-type'] === 'mobile') {
+      return res.json({ token, user: userData });
     } else {
-      // 4. Set cookie and respond
       res.cookie('token', token, { 
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 10800000
       });
-
-      res.json({ 
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        phone_number: user.phone_number,
-        role: user.role,
-        status: user.status,
-        enterprise_id: user?.enterprise_id      
-      });
-    }    
+      return res.json(userData); // Critical change: Always return JSON
+    }
 
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ error: "Login failed" });
+    return res.status(500).json({ error: "Login failed" }); // Explicit return
   }
 };
 
