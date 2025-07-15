@@ -2,7 +2,9 @@ FROM node:20
 
 # Install netcat for entrypoint wait check
 RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update && \
+    apt-get install -y netcat-openbsd postgresql-client && \
+    rm -rf /var/lib/apt/lists/*
 # Create app directory
 WORKDIR /app
 
