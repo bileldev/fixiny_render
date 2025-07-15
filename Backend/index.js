@@ -23,7 +23,7 @@ const app = express();
 
 // Enable CORS for all routes (or customize as needed)
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend URL
+  origin: ['http://localhost:5173',process.env.APP_URL], // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   credentials: true // Enable cookies/auth headers if needed
 }));
