@@ -1,4 +1,4 @@
-FROM node:22
+FROM node:20
 
 # Install netcat for entrypoint wait check
 RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
