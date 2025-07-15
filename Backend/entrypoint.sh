@@ -6,6 +6,10 @@ set -e
 FLAG_FILE="/app/.db_seeded"
 
 DB_HOST=$(echo "$DATABASE_URL" | sed -E 's|.*@([^:/]+):.*|\1|')
+
+echo "[debug] DATABASE_URL: $DATABASE_URL"
+env
+
 #DB_PORT=5432
 if [ -z "$DATABASE_URL" ]; then
   echo "[error] DATABASE_URL is not set!"
