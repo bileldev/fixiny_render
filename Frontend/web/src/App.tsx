@@ -20,11 +20,11 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import PrivateRoute from './components/auth/PrivateRoutes';
 import Unauthorized from "./pages/OtherPage/Unauthorized"
-import UsersList from "./components/Users management/UsersList";
-import CarManagement from "./components/Car management/CarManagement";
+import UsersList from "./components/Usersmanagement/UsersList";
+import CarManagement from "./components/Carmanagement/CarManagement";
 import HomeUser from "./pages/Dashboard/Home chef";
-import CarsList from "./components/Car management/CarsList";
-import MaintenanceList from "./components/Car management/MaintenanceList";
+import CarsList from "./components/Carmanagement/CarsList";
+import MaintenanceList from "./components/Carmanagement/MaintenanceList";
 import ZonesManagement from "./components/Espace client/ZoneManagement";
 import ZoneDetail from "./components/Espace client/ZoneDetail";
 import ZoneCarManagement from "./components/Espace client/ZoneCarsManagement";
