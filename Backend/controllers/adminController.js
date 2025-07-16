@@ -67,7 +67,7 @@ exports.changeUserStatus = async (req, res) => {
     });    
 
     // Send email notification to user
-    /*await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Fixiny Platform" <${process.env.ADMIN_EMAIL}>`,
       to: user.email,
       subject: `Account ${newStatus}`,
@@ -78,7 +78,7 @@ exports.changeUserStatus = async (req, res) => {
           '<p>You can now login to your account.</p>' : 
           '<p>Please contact support for more information.</p>'}
       `
-    });*/
+    });
     
     res.json(user);
   } catch (error) {
