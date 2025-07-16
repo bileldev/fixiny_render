@@ -1,5 +1,4 @@
 // prisma/seed.js
-
 const prisma = require('../config/prisma');
 const bcrypt = require('bcryptjs');
 
