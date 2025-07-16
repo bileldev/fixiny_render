@@ -36,89 +36,41 @@ export default function SignInForm() {
     return valid;
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  //   if (!validateForm()) return;
+    if (!validateForm()) return;
     
-  //   setIsSubmitting(true);
-  //   setErrors(prev => ({ ...prev, form: '' }));
+    setIsSubmitting(true);
+    setErrors(prev => ({ ...prev, form: '' }));
         
-  //   try {
-  //     const response = await fetch('/api/auth/login', {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ email: email, password: password }),
-  //       credentials: 'include', // For cookies
-  //     });
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       localStorage.setItem('user', JSON.stringify(data));
-  //       navigate(data.role === 'ADMIN' ? '/' : data.role === 'CHEF_PARK' ? '/chef-park' : '/particulier');
-  //     }
-  //     if (response.status == 403){
-  //       navigate('/error-403')
-  //     }
-  //     if (response.status == 401){
-  //       setErrors(prev => ({ ...prev, form: 'Invalid email or password' }));
-  //     }
-  //   } catch (err) {      
-  //     console.error('Login failed:', err);
-  //     setErrors(prev => ({ ...prev, form: 'Network error. Please try again.' }));
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!validateForm()) return;
-  
-  setIsSubmitting(true);
-  setErrors(prev => ({ ...prev, form: '' }));
-  
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-      credentials: 'include',
-    });
-
-    // Handle non-JSON responses first
-    const text = await response.text();
-    let data;
     try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      throw new Error('Invalid server response');
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password }),
+        credentials: 'include', // For cookies
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('user', JSON.stringify(data));
+        navigate(data.role === 'ADMIN' ? '/' : data.role === 'CHEF_PARK' ? '/chef-park' : '/particulier');
+      }
+      if (response.status == 403){
+        navigate('/error-403')
+      }
+      if (response.status == 401){
+        setErrors(prev => ({ ...prev, form: 'Invalid email or password' }));
+      }
+    } catch (err) {      
+      console.error('Login failed:', err);
+      setErrors(prev => ({ ...prev, form: 'Network error. Please try again.' }));
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    if (response.status === 403) {
-      navigate('/error-403');
-      return;
-    }
-
-    if (!response.ok) {
-      const errorMsg = data.error || 'Login failed';
-      setErrors(prev => ({ ...prev, form: errorMsg }));
-      return;
-    }
-
-    // Success case
-    localStorage.setItem('user', JSON.stringify(data));
-    navigate(data.role === 'ADMIN' ? '/' : 
-             data.role === 'CHEF_PARK' ? '/chef-park' : 
-             '/particulier');
-
-  } catch (err) {
-    setErrors(prev => ({ 
-      ...prev, 
-      form: err instanceof Error ? err.message : 'Network error' 
-    }));
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  
   return (
     <div className="flex flex-col flex-1">      
       <div className="w-full max-w-md pt-10 mx-auto">
