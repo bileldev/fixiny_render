@@ -27,7 +27,7 @@ const PrivateRoute = ({
         if (!localUser) throw new Error('No local user');
 
         // 2. Verify with backend
-        const response = await fetch('/api/auth/verify', {
+        const response = await fetch('https://fixiny-render-xbc3.onrender.com/api/auth/verify', {
           credentials: 'include'
         });
 

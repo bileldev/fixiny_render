@@ -66,7 +66,7 @@ export default function SignUpForm() {
       const timer = setTimeout(async () => {
         setIsSearching(true);
         try {
-          const response = await fetch(`api/enterprises/get-enterprises?search=${encodeURIComponent(enterpriseSearch)}`);
+          const response = await fetch(`https://fixiny-render-xbc3.onrender.com/api/enterprises/get-enterprises?search=${encodeURIComponent(enterpriseSearch)}`);
           const data = await response.json();
           setEnterpriseOptions(data);
         } catch (error) {
@@ -136,7 +136,7 @@ export default function SignUpForm() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('https://fixiny-render-xbc3.onrender.com/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
