@@ -23,7 +23,7 @@ const app = express();
 
 // Enable CORS for all routes (or customize as needed)
 app.use(cors({
-  origin: 'https://fixiny-render-fe.onrender.com', // Replace with your frontend URL
+  origin:  "*", // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   credentials: true // Enable cookies/auth headers if needed
 }));
