@@ -24,7 +24,7 @@ const app = express();
 // Enable CORS for all routes (or customize as needed)
 app.use(cors({
   origin: 'https://fixiny-vercel.vercel.app', // Replace with your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed HTTP methods
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
   credentials: true // Enable cookies/auth headers if needed
 }));
 
