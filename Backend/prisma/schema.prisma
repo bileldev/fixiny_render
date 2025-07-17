@@ -12,6 +12,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL") // .env file
+  directUrl = "postgresql://postgres.wpwyvgdwhaclmahglhhh:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:5432/postgres"
 }
 
 enum UserRole {
