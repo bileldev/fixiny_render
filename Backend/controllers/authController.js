@@ -337,10 +337,12 @@ exports.login = async (req, res) => {
 
     } else {
       // 4. Set cookie and respond
-      res.cookie('token', token, { 
+      res.cookie('token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 10800000
+        secure: true, // Force HTTPS (Render uses HTTPS)
+        sameSite: 'none', // Required for cross-domain cookies
+        domain: '.onrender.com', // Share cookie across all Render subdomains
+        maxAge: 10800000,
       });
 
       res.json({ 
@@ -425,8 +427,9 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: true, // Force HTTPS (Render uses HTTPS)
+    sameSite: 'none', // Required for cross-domain cookies
+    domain: '.onrender.com', // Share cookie across all Render subdomains
   });
   res.status(200).json({ message: 'Successfully logged out' });
 };
