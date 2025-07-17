@@ -341,7 +341,7 @@ exports.login = async (req, res) => {
         httpOnly: true,
         secure: true, // Force HTTPS (Render uses HTTPS)
         sameSite: 'none', // Required for cross-domain cookies
-        domain: '.onrender.com', // Share cookie across all Render subdomains
+        //domain: '.onrender.com', // Share cookie across all Render subdomains
         maxAge: 10800000,
       });
 
@@ -429,7 +429,7 @@ exports.logout = (req, res) => {
     httpOnly: true,
     secure: true, // Force HTTPS (Render uses HTTPS)
     sameSite: 'none', // Required for cross-domain cookies
-    domain: '.onrender.com', // Share cookie across all Render subdomains
+    //domain: '.onrender.com', // Share cookie across all Render subdomains
   });
   res.status(200).json({ message: 'Successfully logged out' });
 };
