@@ -103,11 +103,11 @@ router.patch('/my-cars/transfer/:id', transferCar);
 
 //Maintenance
 
+router.get('/my-maintenances/upcoming', getUpcomingMaintenances)
 router.get('/my-maintenances', getMaintenances);
 router.post('/my-maintenances/add', upload.single('facture'), createMaintenance);
 router.get('/my-maintenances/history/:carId', getMaintenanceHistory);
 router.post('/my-maintenances/plan', planMaintenance)
-router.get('/my-maintenances/upcoming', getUpcomingMaintenances)
 router.put('/my-maintenances/upcoming/complete/:id', upload.single('facture'), completeMaintenance)
 
 //Mileage
