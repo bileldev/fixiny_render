@@ -23,7 +23,7 @@ const app = express();
 
 // Enable CORS for all routes (or customize as needed)
 app.use(cors({
-  origin: ['https://fixiny-vercel.vercel.app','https://www.fixiny.net'], // Replace with your frontend URL
+  origin: ['https://fixiny-vercel.vercel.app','https://www.fixiny.net', 'http://localhost:5173'], // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
   credentials: true // Enable cookies/auth headers if needed
 }));
@@ -93,5 +93,6 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
 
 
