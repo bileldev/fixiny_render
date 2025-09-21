@@ -36,6 +36,7 @@ app.use(cors({
 const allowedOrigins = [
   'https://fixiny-vercel.vercel.app',
   'https://www.fixiny.net',
+  'https://fixiny.net',
   'http://localhost:5173',
   'http://localhost:8081',
   'exp://192.168.1.33:8081'
@@ -114,6 +115,7 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
 
 
 
