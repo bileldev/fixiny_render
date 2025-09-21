@@ -135,7 +135,7 @@ exports.getMaintenanceHistory = async (req, res) => {
   }
 };
 
-exports.planMaintenance = async (req, res) => {
+/*exports.planMaintenance = async (req, res) => {
   try {
     const { car_id } = req.body;
     const MILEAGE_BUFFER = 1000; // Window to plan ahead (km)
@@ -227,7 +227,121 @@ exports.planMaintenance = async (req, res) => {
     });
   }
 };
+*/
+exports.planMaintenance = async (req, res) => {
+  try {
+    const { car_id } = req.body;
+    const MILEAGE_WINDOW = 1000; // Show maintenance as upcoming if within 1000 km
 
+    // Get car with latest data
+    const car = await prisma.car.findUnique({
+      where: { id: car_id },
+      include: { 
+        zone: true,
+        mileages: { orderBy: { recordedAt: 'desc' }, take: 1 },
+        maintenances: {
+          where: { 
+            OR: [
+              { status: { in: ['UPCOMING', 'OVERDUE'] } },
+              { type: 'PREVENTIVE_MAINTENANCE' }
+            ]
+          },
+          orderBy: { recordedMileage: 'desc' }
+        }
+      }
+    });
+
+    if (!car || car.zone.chef_park_id !== req.user.id) {
+      return res.status(403).json({ error: 'Unauthorized car access' });
+    }
+
+    const maintenanceRules = await prisma.maintenanceRule.findMany();
+    const currentMileage = car.mileages[0]?.value || car.initial_mileage;
+    const plannedMaintenances = [];
+
+    // Find all preventive maintenances ever done on this car
+    const allPreventiveMaintenances = await prisma.maintenance.findMany({
+      where: {
+        car_id,
+        type: 'PREVENTIVE_MAINTENANCE',
+        status: 'DONE'
+      },
+      orderBy: { recordedMileage: 'desc' }
+    });
+
+    for (const rule of maintenanceRules) {
+      // Find last completed instance of this specific maintenance
+      const lastDone = allPreventiveMaintenances.find(m => m.description === rule.name);
+      const lastDoneMileage = lastDone?.recordedMileage || car.initial_mileage;
+
+      // Calculate next due mileage
+      const nextDueMileage = lastDoneMileage + rule.mileageInterval;
+      
+      // Calculate mileage difference
+      const mileageDifference = nextDueMileage - currentMileage;
+      
+      // Determine status based on mileage difference
+      let status = 'PLANNED';
+      if (mileageDifference <= 0) {
+        status = 'OVERDUE';
+      } else if (mileageDifference <= MILEAGE_WINDOW) {
+        status = 'UPCOMING';
+      }
+
+      // Check if this exact maintenance point already exists
+      const existing = car.maintenances.find(m => 
+        m.description === rule.name && 
+        m.recordedMileage === nextDueMileage
+      );
+
+      if (!existing) {
+        // Only create if it's overdue or upcoming
+        if (status === 'OVERDUE' || status === 'UPCOMING') {
+          const plannedDate = new Date();
+          // Set date based on status
+          if (status === 'OVERDUE') {
+            plannedDate.setDate(plannedDate.getDate() - 7); // Overdue by a week
+          } else {
+            // Estimate date based on average daily mileage
+            // This is a simple estimation - you might want to improve this
+            const estimatedDays = Math.ceil(mileageDifference / 100); // Assuming 100 km per day
+            plannedDate.setDate(plannedDate.getDate() + estimatedDays);
+          }
+
+          const newMaintenance = await prisma.maintenance.create({
+            data: {
+              car_id,
+              type: 'PREVENTIVE_MAINTENANCE',
+              date: plannedDate,
+              recordedMileage: nextDueMileage,
+              cost: 0,
+              description: rule.name,
+              status: status
+            }
+          });
+          plannedMaintenances.push(newMaintenance);
+        }
+      } else if (existing.status !== status) {
+        // Update status if it has changed
+        await prisma.maintenance.update({
+          where: { id: existing.id },
+          data: { status }
+        });
+        plannedMaintenances.push({ ...existing, status });
+      } else {
+        plannedMaintenances.push(existing);
+      }
+    }
+
+    res.status(200).json(plannedMaintenances);
+  } catch (error) {
+    console.error('Error planning maintenance:', error);
+    res.status(500).json({ 
+      error: 'Failed to plan maintenance',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
 
 
 exports.getUpcomingMaintenances = async (req, res) => {
@@ -415,4 +529,5 @@ exports.showMaintenanceDemographic = async (req, res) => {
       details: error.message // Send error details to client
     });
   }
+
 };
