@@ -135,7 +135,7 @@ exports.getMaintenanceHistory = async (req, res) => {
   }
 };
 /*Aymen solution*/
-/*exports.planMaintenance = async (req, res) => {
+exports.planMaintenance = async (req, res) => {
   try {
     const { car_id } = req.body;
     const MILEAGE_BUFFER = 1000; // Window to plan ahead (km)
@@ -227,7 +227,7 @@ exports.getMaintenanceHistory = async (req, res) => {
     });
   }
 };
-*/
+
 /*
 exports.planMaintenance = async (req, res) => {
   try {
@@ -346,7 +346,7 @@ exports.planMaintenance = async (req, res) => {
 */
 
 // In maintenanceController.js - update the planMaintenance function
-exports.planMaintenance = async (req, res) => {
+/*exports.planMaintenance = async (req, res) => {
   try {
     const { car_id } = req.body;
     const MILEAGE_WINDOW = 1000; // Show maintenance as upcoming if within 1000 km
@@ -458,7 +458,7 @@ exports.planMaintenance = async (req, res) => {
       details: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-};
+};*/
 
 exports.getUpcomingMaintenances = async (req, res) => {
   try {
@@ -647,4 +647,5 @@ exports.showMaintenanceDemographic = async (req, res) => {
   }
 
 };
+
 
