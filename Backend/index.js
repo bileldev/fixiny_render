@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 // Enable CORS for all routes (or customize as needed)
-app.use(cors({
+/*app.use(cors({
   origin: ['https://fixiny-vercel.vercel.app','https://www.fixiny.net', 'http://localhost:5173'], // Replace with your frontend URL
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Allowed HTTP methods
   credentials: true // Enable cookies/auth headers if needed
@@ -31,7 +31,28 @@ app.use(cors({
 app.use(cors({
   origin: ['http://localhost:8081', 'exp://192.168.1.33:8081'], // Add your mobile URLs
   credentials: true
+}));*/
+
+const allowedOrigins = [
+  'https://fixiny-vercel.vercel.app',
+  'https://www.fixiny.net',
+  'http://localhost:5173',
+  'http://localhost:8081',
+  'exp://192.168.1.33:8081'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for this origin: ' + origin));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  credentials: true
 }));
+
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -93,6 +114,7 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
 
 
 
