@@ -40,7 +40,6 @@ const nodemailer = require('nodemailer')
     logger: true
 })*/
 
-const nodemailer = require('nodemailer');
 
 // Configure for SendGrid
 const transporter = nodemailer.createTransport({
@@ -67,5 +66,6 @@ transporter.verify(function(error, success) {
 
 
 module.exports = transporter;
+
 
 
