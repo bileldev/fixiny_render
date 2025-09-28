@@ -11,7 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendEmail = async (mailOptions) => {
   try {
     const emailData = {
-      from: 'Fixiny Platform <onboarding@resend.dev>', // You can change this later to your domain
+      from: 'Fixiny Platform <bilel.bennour23@gmail.com>', // You can change this later to your domain
       to: mailOptions.to,
       subject: mailOptions.subject,
       html: mailOptions.html
