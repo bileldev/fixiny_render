@@ -319,7 +319,7 @@ exports.login = async (req, res) => {
         enterprise_id: user?.enterprise_id 
       },
       process.env.JWT_SECRET, // Make sure this matches your .env
-      { expiresIn: '3h' }
+      { expiresIn: '24h' }
     );
 
     const isMobileClient = req.headers['x-client-type'] === 'mobile';
@@ -731,7 +731,7 @@ exports.logout = (req, res) => {
 //         enterprise_id: user?.enterprise_id 
 //       },
 //       process.env.JWT_SECRET, // Make sure this matches your .env
-//       { expiresIn: '3h' }
+//       { expiresIn: '24h' }
 //     );
 
 //     const isMobileClient = req.headers['x-client-type'] === 'mobile';
@@ -1162,7 +1162,7 @@ exports.logout = (req, res) => {
 //         enterprise_id: user?.enterprise_id 
 //       },
 //       process.env.JWT_SECRET, // Make sure this matches your .env
-//       { expiresIn: '3h' }
+//       { expiresIn: '24h' }
 //     );
 
 //     const isMobileClient = req.headers['x-client-type'] === 'mobile';
@@ -1576,7 +1576,7 @@ exports.logout = (req, res) => {
 // //         enterprise_id: user?.enterprise_id 
 // //       },
 // //       process.env.JWT_SECRET, // Make sure this matches your .env
-// //       { expiresIn: '3h' }
+// //       { expiresIn: '24h' }
 // //     );
 
 // //     const isMobileClient = req.headers['x-client-type'] === 'mobile';
@@ -1950,7 +1950,7 @@ exports.logout = (req, res) => {
 // // //         enterprise_id: user?.enterprise_id 
 // // //       },
 // // //       process.env.JWT_SECRET, // Make sure this matches your .env
-// // //       { expiresIn: '3h' }
+// // //       { expiresIn: '24h' }
 // // //     );
 
 // // //     const isMobileClient = req.headers['x-client-type'] === 'mobile';
@@ -2024,7 +2024,7 @@ exports.logout = (req, res) => {
 // // // //         enterprise_id: user?.enterprise_id 
 // // // //       },
 // // // //       process.env.JWT_SECRET,
-// // // //       { expiresIn: '3h' }
+// // // //       { expiresIn: '24h' }
 // // // //     );
 
 // // // //     // Always return JSON (even for web)
@@ -2067,5 +2067,6 @@ exports.logout = (req, res) => {
 // // //   });
 // // //   res.status(200).json({ message: 'Successfully logged out' });
 // // // };
+
 
 
