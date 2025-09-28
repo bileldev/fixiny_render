@@ -42,7 +42,7 @@ const nodemailer = require('nodemailer')
 
 
 // Configure for SendGrid
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     host: 'smtp.sendgrid.net',
     port: 587,
     secure: false,
@@ -59,11 +59,19 @@ transporter.verify(function(error, success) {
   } else {
     console.log('Server is ready to take our messages');
   }
+});*/
+
+
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: process.env.APP_MAIL,
+      pass: process.env.APP_MAIL_KEY
+    }
 });
-
-
-
-
 
 module.exports = transporter;
 
