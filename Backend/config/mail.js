@@ -12,7 +12,7 @@ const nodemailer = require('nodemailer')
 
 
 // })
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
@@ -22,6 +22,22 @@ const transporter = nodemailer.createTransport({
     },
     debug: true,      // Enables detailed SMTP traffic logs
     logger: true      // Outputs logs to the console
+})*/
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,  // Explicitly require TLS
+    tls: {
+        rejectUnauthorized: false  // May help with certificate issues
+    },
+    auth: {
+        user: process.env.APP_MAIL,
+        pass: process.env.APP_MAIL_KEY
+    },
+    debug: true,
+    logger: true
 })
 transporter.verify(function(error, success) {
   if (error) {
@@ -32,4 +48,8 @@ transporter.verify(function(error, success) {
 });
 
 
+
+
+
 module.exports = transporter;
+
