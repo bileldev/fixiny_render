@@ -24,7 +24,7 @@ const nodemailer = require('nodemailer')
     logger: true      // Outputs logs to the console
 })*/
 
-const transporter = nodemailer.createTransport({
+/*const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
@@ -38,7 +38,22 @@ const transporter = nodemailer.createTransport({
     },
     debug: true,
     logger: true
-})
+})*/
+
+const nodemailer = require('nodemailer');
+
+// Configure for SendGrid
+const transporter = nodemailer.createTransport({
+    host: 'smtp.sendgrid.net',
+    port: 587,
+    secure: false,
+    auth: {
+        user: "apikey", // The string literally "apikey"
+        pass: process.env.SENDGRID_API_KEY // Your SendGrid API Key
+    },
+    debug: true,
+    logger: true
+});
 transporter.verify(function(error, success) {
   if (error) {
     console.log('SMTP connection error:', error);
@@ -52,4 +67,5 @@ transporter.verify(function(error, success) {
 
 
 module.exports = transporter;
+
 
